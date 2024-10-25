@@ -1,5 +1,5 @@
 {
-  "name": "koishi-plugin-w-as-slice",
+  "name": "koishi-plugin-w-as-slices",
   "description": "WillBot: send message as slices",
   "version": "0.0.1",
   "main": "lib/index.js",
@@ -9,14 +9,20 @@
     "dist"
   ],
   "license": "MIT",
-  "scripts": {},
   "keywords": [
     "chatbot",
     "koishi",
     "plugin"
   ],
-  "devDependencies": {},
   "peerDependencies": {
     "koishi": "^4.18.0"
+  },
+  "dependencies": {
+    "@satorijs/element": "^3.1.7"
+  },
+  "scripts": {
+    "build": "yarn workspace willbot build w-as-slices",
+    "bump": "yarn workspace willbot bump w-as-slices",
+    "pub": "yarn workspace willbot pub w-as-slices"
   }
 }
