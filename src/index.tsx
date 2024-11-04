@@ -6,7 +6,7 @@ export interface Config {}
 
 export const Config: z<Config> = z.object({})
 
-interface AsForwardAttr {
+interface AsSlicesAttr {
     header: Fragment
     sliceLength: number
 }
@@ -14,21 +14,24 @@ interface AsForwardAttr {
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            'as-slices': AsForwardAttr & { children?: any[] }
+            'as-slices': AsSlicesAttr & { children?: any[] }
         }
     }
 }
 
-export function apply(ctx: Context, _config: Config) {
-    const renderAsSlices = ({ header, sliceLength }: AsForwardAttr, children: h[], _session: Session): h => {
-        const [ slices ] = children.reduce<[ string[], string ]>(([ slices, currentSlice ], text, index) => {
-            const appendedSlice = currentSlice + text
-            if (appendedSlice.length >= sliceLength || index === children.length - 1) {
-                slices.push(appendedSlice)
-                return [ slices, '' ]
-            }
-            return [ slices, appendedSlice ]
-        }, [ [], header?.toString() ?? '' ])
+export function apply(ctx: Context) {
+    const renderAsSlices = ({ header, sliceLength }: AsSlicesAttr, children: h[], _session: Session): h => {
+        const [ slices ] = [ header?.toString() ?? '', ...children ].reduce<[ string[], string ]>(
+            ([ slices, currentSlice ], text, index, { length }) => {
+                const appendedSlice = currentSlice + text
+                if (appendedSlice.length >= sliceLength || index === length - 1) {
+                    slices.push(appendedSlice)
+                    return [ slices, '' ]
+                }
+                return [ slices, appendedSlice ]
+            },
+            [ [], '' ]
+        )
         return <>{ slices.map(slice => <message>{ h.parse(slice) }</message>) }</>
     }
 
